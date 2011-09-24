@@ -1,0 +1,55 @@
+This package contains an Eiffel library for socket communications.
+The code works with ISE Eiffel compiler and it was only tested
+on Linux.
+
+This library is released under the Eiffel Forum license. See
+the file "forum.txt". 
+
+If you do something cool with this code please give me credit.
+If you you do something bad, don't blame me. ;-)
+
+
+This distribution is divided into the following directories and files:
+	
+
+	README					- this file
+	forum.txt				- Eiffel Forum license file
+	CHANGELOG				- notes of what changed and what I'm working
+							  on, include design notes
+	./lib+					- socket classes
+		|
+		+ ise_specific		- classes specific to ISE
+	./C						- C code needed for the library
+	./examples
+		|
+		+ simple			- simplest example of communication with sockets
+		|
+		+ server			- simple server
+		|
+		+ misc				- junk
+	./emu_httpd				- Eiffel micro http server ("Emu")
+
+My intention is to port this code to other compilers, so I'm trying
+to make it as portable as I can. 
+
+
+With the most recent version (1/6/98) if you are compiling with ISE
+compiler, you have to set up an environment variable: INCLUDE_PATH
+that points to the directory that contains the "eiffel_socket.h" file.
+For me this variable is set like this:
+
+	export INCLUDE_PATH=-I/home/nrichieb/Eiffel/socket/C
+
+
+Any suggestions, improvements, bug reports email: richieb@netlabs.net
+
+Enjoy...
+
+...richie
+
+richieb@netlabs.net
+http://www.netlabs.net/~richieb/projects.html
+
+Copyright (c) 1998 by Richie Bielak
+
+

@@ -1,0 +1,49 @@
+system
+	emu_httpd
+
+root
+	emu_httpd(root_cluster): "make"
+
+default
+	assertion (all);
+	address_expression (yes);
+	debug (yes);
+	precompiled ("$EIFFEL4/precomp/spec/$PLATFORM/base");
+
+
+cluster
+
+	
+	root_cluster: "C:\prog\source\eiffel\socket_tar\socket\emu_httpd";
+	lib: "C:\prog\source\eiffel\socket_tar\socket\lib";	
+	ise_lib: "C:\prog\source\eiffel\socket_tar\socket\lib\ise_specific";	
+
+	-- Gobo
+	ds_structures: "$GOBO/library/structure/table";
+	ds_cursors: "$GOBO/library/structure/cursor";
+	ds_search: "$GOBO/library/structure/search";
+	ds_support: "$GOBO/library/structure/support";
+	ds_container: "$GOBO/library/structure/container";
+
+	kernel:			"$EIFFEL4/library/base/kernel";
+	support:		"$EIFFEL4/library/base/support";
+	access:			"$EIFFEL4/library/base/structures/access";
+	cursors:		"$EIFFEL4/library/base/structures/cursors";
+	cursor_tree:	"$EIFFEL4/library/base/structures/cursor_tree";
+	dispenser:		"$EIFFEL4/library/base/structures/dispenser";
+	iteration:		"$EIFFEL4/library/base/structures/iteration";
+	list:			"$EIFFEL4/library/base/structures/list";
+	set:			"$EIFFEL4/library/base/structures/set";
+	sort:			"$EIFFEL4/library/base/structures/sort";
+	storage:		"$EIFFEL4/library/base/structures/storage";
+	table:			"$EIFFEL4/library/base/structures/table";
+	traversing:		"$EIFFEL4/library/base/structures/traversing";
+	tree:			"$EIFFEL4/library/base/structures/tree";
+--	thread:			"$EIFFEL4/library/thread";
+
+external
+	
+	object:
+	"C:\prog\source\eiffel\socket_tar\socket\C\ise_socket.obj"
+
+end

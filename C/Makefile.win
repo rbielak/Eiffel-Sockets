@@ -1,0 +1,9 @@
+OBJS = ise_socket.obj test_sock.obj
+LDLIBS = 
+CFLAGS =-IC:\Programme\Eiffel42\bench\spec\windows\include
+CC = cl
+
+
+test_sock: $(OBJS)
+	cl -o test_sock $(OBJS) $(LDLIBS) 
+

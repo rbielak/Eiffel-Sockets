@@ -1,0 +1,200 @@
+b10/1/98
+
+Created SOCKET_EXTERNALS and SOCKET_CONSTANTS. Next must start
+a C lib for doing bind etc, so connect will work.
+
+Design question: 
+	Should I do input/output streams like Java?
+	It would be more portable to use them.
+
+	Could use SmallEiffels INPUT_STREAM and OUTPUT_STREAM,
+	they are deferred.
+
+10/2/98
+
+Design:
+
+	I can't use SmallEiffel stream classes because they assume that
+	stuff read or written is ASCII. I want to be able to read/write
+	binary.
+
+	I'll start with simple read/write routines directly in socket
+	class.
+
+	The best thing is to have SOCKET class with basic IO and then
+	have CLIENT_SOCKET and SERVER_SOCKET. Then have a SOCKET_SET
+	so that we can listen to many sockets at once.
+
+	"port" and "host" should be routines in CLIENT and attributes
+	in SERVER.
+
+10/3/98 
+
+	Added a CLIENT_SOCKET class that will connect. Next have to do
+	a SERVER_SOCKET.
+
+Design question:
+	What about redifining copy and is_equal? Should a SOCKET be allowed	
+	to be copied with the same fd???
+
+	Rename make routines to better specify what sort of socket it is?
+	Like "make_inet_stream" or "make_unix_datagram" ???
+
+
+10/7/98
+
+	Coded C routine for connecting an inet  socket. Unix sockets should
+	be added later. 
+
+	Test fails. Must debug the C code.
+	
+10/9/98
+
+	Debugged the connect routine. Works fine now.
+
+	TODO: Allow connections by IP address or hostname for INET sockets.
+
+
+10/10/98
+
+	Wrote stuff to send and receive strings.
+
+	Done SERVER_SOCKET. Tested comm between two processes. OK
+
+Design: 
+	keep an internal buffer in socket so that read_line doesn't
+	have to specify the max size of string. Size of buffer set
+	at creation.
+
+	SELECT_SET will be a class that will allow us to manage a collection
+	of sockets. It could be general enough to handle any file descriptor
+	thing. I'm not sure how to do the association between the socket
+	and the action. Perhaps a table of sockets and COMMAND type
+	objects that handle the socket when it's ready.
+
+	TODO: termination conditions must be set up properly. Maybe this:
+	CLIENT_SOCKET: read should set an EOF flag if it fails
+	SERVER_SOCKET: accept can set the flag when it fails
+
+	Another idea: add debug statements to make the code easier to
+	debug.
+
+
+10/12/98
+
+	Added an internal buffer for reading. ISE's string has a nice
+	routine called "from_c_substring" which allows better control
+	of how much of a C-string gets converted into Eiffel.
+
+	Added "end_of_file" boolean. Set by close.
+
+	Next: SELECT_SET
+
+10/17/98 
+
+	Wrote code for select. Now has to be tested.
+
+10/23/98
+
+	Started to test select set. A server socket is working. I must
+	code remove socket from select_set. Otherwise select fails.
+	I should probably print the value of "errno".
+
+10/25/98
+
+	SELECT_SET works. With my test server I have some strange errors
+	when connecting and disconnecting several clients. Sometimes
+	the handler dies trying to read from a closed socket.
+	I don't know how this happens.
+
+10/26/98
+
+	DESIGN: to make the select_set more concurrent the handlers
+	should have separate routines for doing reads and writes.
+	By doing asynchronous reads and writes more stuff could
+	be done at once.
+
+	For a Web server though it's just as easy to fork a process
+	once a connection is received.
+
+
+10/27/98
+
+	Revamped directories. Started an example directory.
+		examples/simple - simplest example
+		examples/server - simplest server that can handle many connections
+
+10/29/98
+
+	Came up with a good name for the http server: "Emu" - for Eiffel
+	micro (mu in greek) Http Server. Now I have to write it. :-)
+
+	Started with the framework for Emu, now I have to read up on
+	http protocol.
+
+	I should remove handlers from select set if the socket closes,	
+	rather than forcing the handler to remove itself. There should
+	be a boolean function for checking if the socket is closed.
+
+11/2/98
+
+	Little more work in Emu. Added HTTP_REQUEST and HTTP_REPLY
+	classes. 
+
+	DESIGN: There are two things that go on in a server - tcp/ip
+	connections (i.e. socket connections) and sessions (i.e. preserved
+	context between client and server). These have to be separate.
+	Another words, a session object will keep context of a session,
+	whether there is a connection or not, and the CLIENT_SOCKET_HANDLER
+	keeps the connection going. 
+	
+	In the simplest case the server can disconnect after every reply
+	is sent.
+
+	BUG: In my reply the header isn't quite right. It shows up in the
+	text displayed by the browser. I should make up some simple
+	pages before trying things with gifs etc.
+		- fixed (11/3/98): needed real HTTP header
+
+	BUG: Before attempting socket I/O I should check if the socket is still	
+	open. Probably better would be to have a rescue?
+
+11/3/98
+
+	Question: how does the browser know server is done?
+	Answer: disconnect the socket
+
+	For errors should create http_error_reply with instances for each
+	error and use them.
+
+	DESIGN: Dispatch on method to an HTTP_REQUEST descendant that
+	handles different methods.
+
+	Next: restructure the code so that the appropriate classes must be
+	written.
+
+
+11/9/98 
+
+	Revamped the code for dipatching the requests. Now there will be
+	a handler for each method (GET, POST, HEAD etc) that is 
+	pulled in from a table and that will create the response.
+
+	Changed the respose so that various fields in the header can
+	be reset. Created classes with some http constants. More are
+	needed.
+
+	Next: Add support for matching content type in a file
+	with the type of stuff being sent.
+
+	Think about: how to handle multi-block responses??
+
+11/10/98
+
+	Now can server image files. Added stuff for handling contents
+	types. File reading routines can be improved.
+
+1/6/99
+
+	Integrated changes by Andreas Leitner that makes the code
+	work on Windows.
